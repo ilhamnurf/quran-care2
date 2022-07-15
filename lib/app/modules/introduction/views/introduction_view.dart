@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:http/http.dart';
+
 import 'package:lottie/lottie.dart';
 import 'package:quran_pro/app/constant/color.dart';
 import 'package:quran_pro/app/routes/app_pages.dart';

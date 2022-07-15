@@ -1,15 +1,16 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:quran_pro/app/data/models/detaiSurah.dart' as detail;
 import 'package:quran_pro/app/data/models/surah.dart';
+import 'package:quran_pro/app/modules/home/controllers/home_controller.dart';
 
 import '../../../constant/color.dart';
 import '../controllers/detail_surah_controller.dart';
 
 class DetailSurahView extends GetView<DetailSurahController> {
   final Surah surah = Get.arguments;
+  final homeC = Get.find<HomeController>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,14 +23,14 @@ class DetailSurahView extends GetView<DetailSurahController> {
           padding: EdgeInsets.all(20),
           children: [
             GestureDetector(
-              
               onTap: () => Get.dialog(Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20)
-              ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
                 child: Container(
-                  
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(20) ,color: Get.isDarkMode ? oldDrkGreen2.withOpacity(0.3) : white,),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Get.isDarkMode ? whiteOld : oldGreen,
+                  ),
                   padding: EdgeInsets.all(25),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -49,30 +50,9 @@ class DetailSurahView extends GetView<DetailSurahController> {
                   ),
                 ),
               )),
-              // onTap: () => Get.defaultDialog(
-              //   backgroundColor: Get.isDarkMode?oldDrkGreen2.withOpacity(0.3):white,
-              //   contentPadding:
-              //       EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-              //   title: ' Tafsir  ${surah.name?.transliteration?.id}',
-              //   titleStyle: TextStyle(
-              //     fontWeight: FontWeight.bold,
-              //   ),
-              //   // middleText: '${surah.tafsir?.id ?? 'Tidak ada tafsir di Surat ini'}',
-              //   content: Container(
-              //     // decoration: BoxDecoration(
-              //     //   borderRadius: BorderRadius.circular(20),
-              //     // ),
-              // child: Text(
-              //   ' ${surah.tafsir?.id ?? 'Tidak ada tafsir di Surat ini'}',
-              //   textAlign: TextAlign.left,
-              //   style:
-              //       TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              // ),
-              //   ),
-              // ),
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: [youngGreen, oldDrkGreen2]),
+                  gradient: LinearGradient(colors: [appGreen, oldDrkGreen2]),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Padding(
@@ -126,7 +106,8 @@ class DetailSurahView extends GetView<DetailSurahController> {
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: snapshot.data?.verses?.length ?? 0,
                       itemBuilder: ((context, index) {
-                        if (snapshot.data?.verses == 0) {
+                        // print(index);
+                        if (snapshot.data?.verses?.length == 0) {
                           return SizedBox();
                         }
                         detail.Verse? ayat = snapshot.data?.verses?[index];
@@ -160,17 +141,88 @@ class DetailSurahView extends GetView<DetailSurahController> {
                                           child: Text('${index + 1}'),
                                         ),
                                       ),
-                                      Row(
-                                        children: [
-                                          IconButton(
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                  Icons.bookmark_add_outlined)),
-                                          IconButton(
-                                              onPressed: () {},
-                                              icon: Icon(
-                                                  Icons.play_arrow_rounded))
-                                        ],
+                                      GetBuilder<DetailSurahController>(
+                                        builder: (c) => Row(
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  Get.defaultDialog(
+                                                      title: "BOOKMARK",
+                                                      middleText: "pilih",
+                                                      actions: [
+                                                        ElevatedButton(
+                                                          onPressed: () async{
+                                                            await c.addBookMark(
+                                                              true,
+                                                              snapshot.data!,
+                                                              ayat!,
+                                                              index,
+                                                            );
+                                                            homeC.update();
+                                                          },
+                                                          child:
+                                                              Text("LastRead"),
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                                  primary:
+                                                                      oldDrkGreen),
+                                                        ),
+                                                        ElevatedButton(
+                                                            onPressed: () {
+                                                              c.addBookMark(
+                                                                false,
+                                                                snapshot.data!,
+                                                                ayat!,
+                                                                index,
+                                                              );
+                                                            },
+                                                            child: Text(
+                                                                "bookmark"),
+                                                            style: ElevatedButton
+                                                                .styleFrom(
+                                                                    primary:
+                                                                        oldDrkGreen))
+                                                      ]);
+                                                },
+                                                icon: Icon(Icons
+                                                    .bookmark_add_outlined)),
+                                            (ayat?.kondisiAudio == "stop")
+                                                ? IconButton(
+                                                    onPressed: () {
+                                                      c.playAudio(ayat);
+                                                    },
+                                                    icon: Icon(Icons
+                                                        .play_arrow_rounded))
+                                                : Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      (ayat?.kondisiAudio ==
+                                                              "playing")
+                                                          ? IconButton(
+                                                              onPressed: () {
+                                                                c.pauseAudio(
+                                                                    ayat!);
+                                                              },
+                                                              icon: Icon(
+                                                                  Icons.pause))
+                                                          : IconButton(
+                                                              onPressed: () {
+                                                                c.resumeAudio(
+                                                                    ayat!);
+                                                              },
+                                                              icon: Icon(Icons
+                                                                  .play_arrow_rounded)),
+                                                      IconButton(
+                                                          onPressed: () {
+                                                            c.stopAudio(ayat!);
+                                                          },
+                                                          icon: Icon(Icons
+                                                              .stop_circle_rounded))
+                                                    ],
+                                                  )
+                                          ],
+                                        ),
                                       )
                                     ],
                                   )),
@@ -197,7 +249,7 @@ class DetailSurahView extends GetView<DetailSurahController> {
                             ),
                             Text(
                               "${ayat.translation?.id}",
-                              textAlign: TextAlign.justify,
+                              textAlign: TextAlign.left,
                               style: TextStyle(fontSize: 15),
                             ),
                             SizedBox(

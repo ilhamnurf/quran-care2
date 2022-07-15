@@ -10,6 +10,11 @@ dependencies:
   get: 4.6.5
   http: ^0.13.4
   lottie: 1.3.0
+  get_storage: ^2.0.3
+  just_audio: ^0.9.27
+  sqflite: 2.0.3
+  path_provider: ^2.0.11
+  scroll_to_index: ^3.0.1
   flutter: 
     sdk: flutter
 
@@ -19,7 +24,8 @@ dev_dependencies:
     sdk: flutter
 
 flutter: 
-  uses-material-design: true
   assets: 
     - assets/lotties/
     - assets/images/
+  uses-material-design: true
+

@@ -1,7 +1,7 @@
 import 'package:get/get.dart';
 
 class LastReadController extends GetxController {
-  //TODO: Implement LastReadController
+
 
   final count = 0.obs;
   @override
