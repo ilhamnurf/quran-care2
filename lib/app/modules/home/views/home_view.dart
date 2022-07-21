@@ -125,9 +125,7 @@ class HomeView extends GetView<HomeController> {
                                         child: Text("CANCEL")),
                                     ElevatedButton(
                                       onPressed: () {
-                                        c
-                                            .deleteBookmark(lastRead['id']);
-                                            
+                                        c.deleteBookmark(lastRead['id']);
                                       },
                                       child: Text("DELETE"),
                                     )
@@ -247,8 +245,10 @@ class HomeView extends GetView<HomeController> {
                               Surah surah = snapshot.data![index];
                               return ListTile(
                                 onTap: () {
-                                  Get.toNamed(Routes.DETAIL_SURAH,
-                                      arguments: surah);
+                                  Get.toNamed(Routes.DETAIL_SURAH, arguments: {
+                                    "name": surah.name!.transliteration!.id,
+                                    "number": surah.number!,
+                                  });
                                 },
                                 leading: Obx(
                                   () => Container(
@@ -373,7 +373,13 @@ class HomeView extends GetView<HomeController> {
                               Map<String, dynamic> data = snapshot.data![index];
                               return ListTile(
                                 onTap: () {
-                                  print(data);
+                                  Get.toNamed(Routes.DETAIL_SURAH, arguments: {
+                                    "name": data["surah"]
+                                        .toString()
+                                        .replaceAll("+", "'"),
+                                    "number": data["number_surah"],
+                                    "bookmark": data
+                                  });
                                 },
                                 leading: Obx(
                                   () => Container(

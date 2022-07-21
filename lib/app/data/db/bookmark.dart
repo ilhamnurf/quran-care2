@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 
 class DataBaseManager {
   DataBaseManager._private();
-  static DataBaseManager instace = DataBaseManager._private();
+  static DataBaseManager instance = DataBaseManager._private();
   Database? _db;
   Future<Database> get db async {
     if (_db == null) {
@@ -18,13 +18,14 @@ class DataBaseManager {
   Future _initDb() async {
     Directory docDir = await getApplicationDocumentsDirectory();
 
-    String path = join(docDir.path, "bookMark.db");
+    String path = join(docDir.path, "bookmark.db");
     return await openDatabase(path, version: 1,
         onCreate: (database, version) async {
       return await database.execute('''
             CREATE TABLE BookMark (
               id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
               surah TEXT NOT NULL,
+              number_surah INTEGER NOT NULL,
               ayat INTEGER NOT NULL,
               juz INTEGER NOT NULL,
               via TEXT NOT NULL,
@@ -37,7 +38,7 @@ class DataBaseManager {
   }
 
   Future closeDb() async {
-    _db = await instace.db;
+    _db = await instance.db;
     _db!.close();
   }
 }

@@ -14,7 +14,7 @@ class HomeController extends GetxController {
   List<Surah> allSurah = [];
   RxBool isDark = false.obs;
 
-  DataBaseManager database = DataBaseManager.instace;
+  DataBaseManager database = DataBaseManager.instance;
 
   Future<Map<String, dynamic>?> getLastRead() async {
     Database db = await database.db;
@@ -29,8 +29,6 @@ class HomeController extends GetxController {
     }
   }
 
- 
-
   void deleteBookmark(int id) async {
     Database db = await database.db;
     await db.delete("bookmark", where: "id = ${id}");
@@ -42,7 +40,7 @@ class HomeController extends GetxController {
   Future<List<Map<String, dynamic>>> getBM() async {
     Database db = await database.db;
     List<Map<String, dynamic>> allbookmarks =
-        await db.query("bookmark", where: "last_read == 0");
+        await db.query("bookmark", where: "last_read == 0", orderBy: "surah");
     return allbookmarks;
   }
 
