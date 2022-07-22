@@ -118,7 +118,7 @@ class HomeView extends GetView<HomeController> {
                             if (lastRead != null) {
                               Get.defaultDialog(
                                   title: "Delete Last Read",
-                                  middleText: "Are u dumb, u'll loose it",
+                                  middleText: "Are u dumb, u'll delete it",
                                   actions: [
                                     OutlinedButton(
                                         onPressed: () => Get.back(),
@@ -135,6 +135,25 @@ class HomeView extends GetView<HomeController> {
                           onTap: () {
                             if (lastRead != null) {
                               print(lastRead);
+                              switch (lastRead["via"]) {
+                                case "juz":
+                                  Map<String, dynamic> dataMapPerJuz =
+                                      controller.alljuz[lastRead["juz"] - 1];
+                                  Get.toNamed(Routes.DETAIL_JUZ, arguments: {
+                                    "juz": dataMapPerJuz,
+                                    "bookmark": lastRead
+                                  });
+                                  break;
+                                default:
+                                  Get.toNamed(Routes.DETAIL_SURAH, arguments: {
+                                    "name": lastRead["surah"]
+                                        .toString()
+                                        .replaceAll("+", "'"),
+                                    "number": lastRead["number_surah"],
+                                    "bookmark": lastRead
+                                  });
+                                  break;
+                              }
                             }
                           },
                           child: Container(
@@ -287,6 +306,7 @@ class HomeView extends GetView<HomeController> {
                     future: controller.getAllJuz(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
+                        controller.adaDataAllJuz.value = false;
                         return Center(
                           child: CircularProgressIndicator(),
                         );
@@ -296,7 +316,7 @@ class HomeView extends GetView<HomeController> {
                           child: Text("data tidak ditemukan"),
                         );
                       }
-
+                      controller.adaDataAllJuz.value = true;
                       return ListView.builder(
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
@@ -306,7 +326,7 @@ class HomeView extends GetView<HomeController> {
                           return ListTile(
                             onTap: () {
                               Get.toNamed(Routes.DETAIL_JUZ,
-                                  arguments: dataMapPerJuz);
+                                  arguments: {"juz": dataMapPerJuz});
                             },
                             leading: Obx(
                               () => Container(
@@ -350,66 +370,99 @@ class HomeView extends GetView<HomeController> {
                   ),
                   GetBuilder<HomeController>(
                     builder: (c) {
-                      return FutureBuilder<List<Map<String, dynamic>>>(
-                        future: controller.getBM(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Center(
-                                child: CircularProgressIndicator(
-                              color: oldDrkGreen,
-                            ));
-                          }
+                      if (c.adaDataAllJuz.isFalse) {
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(),
+                              SizedBox(
+                                height: 15,
+                              ),
+                              Text("Sedang Menungu data Juz"),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return FutureBuilder<List<Map<String, dynamic>>>(
+                          future: controller.getBM(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(
+                                  child: CircularProgressIndicator(
+                                color: oldDrkGreen,
+                              ));
+                            }
 
-                          if (snapshot.data?.length == 0) {
-                            return Center(
-                              child: Text("Book Mark tidak tersedia"),
-                            );
-                          }
-
-                          return ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              Map<String, dynamic> data = snapshot.data![index];
-                              return ListTile(
-                                onTap: () {
-                                  Get.toNamed(Routes.DETAIL_SURAH, arguments: {
-                                    "name": data["surah"]
-                                        .toString()
-                                        .replaceAll("+", "'"),
-                                    "number": data["number_surah"],
-                                    "bookmark": data
-                                  });
-                                },
-                                leading: Obx(
-                                  () => Container(
-                                    height: 40,
-                                    width: 40,
-                                    child: Center(
-                                      child: Text("${index + 1}"),
-                                    ),
-                                    decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                            image: AssetImage(controller
-                                                    .isDark.isTrue
-                                                ? 'assets/images/Desain tanpa judul2.png'
-                                                : 'assets/images/Desain tanpa judul.png'))),
-                                  ),
-                                ),
-                                title: Text(
-                                    "${data['surah'].toString().replaceAll("+", "'")}"),
-                                subtitle: Text(
-                                    "Ayat ${data['ayat']} - via ${data['via']}"),
-                                trailing: IconButton(
-                                    onPressed: () {
-                                      c.deleteBookmark(data['id']);
-                                    },
-                                    icon: Icon(Icons.delete)),
+                            if (snapshot.data?.length == 0) {
+                              return Center(
+                                child: Text("Book Mark tidak tersedia"),
                               );
-                            },
-                          );
-                        },
-                      );
+                            }
+
+                            return ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                Map<String, dynamic> data =
+                                    snapshot.data![index];
+                                return ListTile(
+                                  onTap: () {
+                                    switch (data["via"]) {
+                                      case "juz":
+                                        print("GO TO JUZ");
+                                        print(data);
+                                        Map<String, dynamic> dataMapPerJuz =
+                                            controller.alljuz[data["juz"] - 1];
+                                        Get.toNamed(Routes.DETAIL_JUZ,
+                                            arguments: {
+                                              "juz": dataMapPerJuz,
+                                              "bookmark": data
+                                            });
+                                        break;
+                                      default:
+                                        Get.toNamed(Routes.DETAIL_SURAH,
+                                            arguments: {
+                                              "name": data["surah"]
+                                                  .toString()
+                                                  .replaceAll("+", "'"),
+                                              "number": data["number_surah"],
+                                              "bookmark": data
+                                            });
+                                        break;
+                                    }
+                                  },
+                                  leading: Obx(
+                                    () => Container(
+                                      height: 40,
+                                      width: 40,
+                                      child: Center(
+                                        child: Text("${index + 1}"),
+                                      ),
+                                      decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                              image: AssetImage(controller
+                                                      .isDark.isTrue
+                                                  ? 'assets/images/Desain tanpa judul2.png'
+                                                  : 'assets/images/Desain tanpa judul.png'))),
+                                    ),
+                                  ),
+                                  title: Text(
+                                      "${data['surah'].toString().replaceAll("+", "'")}"),
+                                  subtitle: Text(
+                                      "Ayat ${data['ayat']} - via ${data['via']}"),
+                                  trailing: IconButton(
+                                      onPressed: () {
+                                        c.deleteBookmark(data['id']);
+                                      },
+                                      icon: Icon(Icons.delete)),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }
                     },
                   )
                 ]),

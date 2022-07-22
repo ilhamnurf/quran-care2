@@ -8,8 +8,9 @@ import 'package:quran_pro/app/modules/home/bindings/home_binding.dart';
 import 'package:quran_pro/app/modules/home/views/home_view.dart';
 import 'package:quran_pro/app/modules/introduction/bindings/introduction_binding.dart';
 import 'package:quran_pro/app/modules/introduction/views/introduction_view.dart';
-import 'package:quran_pro/app/modules/last_read/bindings/last_read_binding.dart';
-import 'package:quran_pro/app/modules/last_read/views/last_read_view.dart';
+import 'package:quran_pro/app/modules/last_read/bindings/last_read_binding.dart.dart'
+    show LastReadBinding;
+import 'package:quran_pro/app/modules/last_read/views/last_read_view.dart.dart';
 import 'package:quran_pro/app/modules/search/bindings/search_binding.dart';
 import 'package:quran_pro/app/modules/search/views/search_view.dart';
 
@@ -42,7 +43,7 @@ class AppPages {
       binding: SearchBinding(),
     ),
     GetPage(
-      name: _Paths.LAST_READ,
+      name: _Paths.DETAIL_JUZ,
       page: () => LastReadView(),
       binding: LastReadBinding(),
     ),

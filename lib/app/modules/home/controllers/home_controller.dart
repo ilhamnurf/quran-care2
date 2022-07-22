@@ -12,7 +12,9 @@ import '../../../constant/color.dart';
 
 class HomeController extends GetxController {
   List<Surah> allSurah = [];
+  List<Map<String, dynamic>> alljuz = [];
   RxBool isDark = false.obs;
+  RxBool adaDataAllJuz = false.obs;
 
   DataBaseManager database = DataBaseManager.instance;
 
@@ -39,8 +41,8 @@ class HomeController extends GetxController {
 
   Future<List<Map<String, dynamic>>> getBM() async {
     Database db = await database.db;
-    List<Map<String, dynamic>> allbookmarks =
-        await db.query("bookmark", where: "last_read == 0", orderBy: "surah");
+    List<Map<String, dynamic>> allbookmarks = await db.query("bookmark",
+        where: "last_read == 0", orderBy: "juz,via,surah ,ayat");
     return allbookmarks;
   }
 
@@ -74,7 +76,6 @@ class HomeController extends GetxController {
   Future<List<Map<String, dynamic>>> getAllJuz() async {
     int juz = 1;
     List<Map<String, dynamic>> penAyat = [];
-    List<Map<String, dynamic>> alljuz = [];
 
     for (var i = 1; i <= 114; i++) {
       var res =

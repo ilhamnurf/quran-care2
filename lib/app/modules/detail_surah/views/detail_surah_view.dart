@@ -36,13 +36,17 @@ class DetailSurahView extends GetView<DetailSurahController> {
             }
 
             if (Get.arguments["bookmark"] != null) {
-              bookmark = Get.arguments[""];
+              bookmark = Get.arguments["bookmark"];
+              var ia = int.parse(bookmark!["index_ayat"]) + 2;
               print("INDEX AYAT : ${bookmark!["index_ayat"]}");
-              print("GO TO INDEX AUTO SCROLL : ${bookmark!["index_ayat"] + 2}");
-              controller.scrollC.scrollToIndex(bookmark!["index_ayat"] + 2,
+              // print("GO TO INDEX AUTO SCROLL : ${bookmark!["index_ayat"] + 2}");
+              controller.scrollC.scrollToIndex(ia,
+                  // bookmark!["index_ayat"] + 2,
                   // 5,
                   preferPosition: AutoScrollPosition.begin);
             }
+            ;
+
             print(bookmark);
 
             detail.DetailSurah surah = snapshot.data!;

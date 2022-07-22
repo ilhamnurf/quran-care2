@@ -1,12 +1,14 @@
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:quran_pro/app/data/models/detaiSurah.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../../../constant/color.dart';
 import '../../../data/db/bookmark.dart';
 
 class DetailJuzController extends GetxController {
+  AutoScrollController scrollC = AutoScrollController();
   int index = 0;
   final player = AudioPlayer();
 
