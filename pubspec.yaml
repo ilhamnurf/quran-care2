@@ -17,6 +17,7 @@ dependencies:
   scroll_to_index: ^3.0.1
   flutter: 
     sdk: flutter
+  skeleton_text: ^3.0.0
 
 dev_dependencies: 
   flutter_lints: ^2.0.0

@@ -23,11 +23,11 @@ class IntroductionView extends GetView<IntroductionController> {
           SizedBox(
             height: 20,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          Center(
             child: Text(
-              'NGAJI BANG!?',
+              "Nothing heals the heart \n better than Allah's Speech",
               textAlign: TextAlign.center,
+              maxLines: 20,
               style: TextStyle(fontSize: 16),
             ),
           ),
